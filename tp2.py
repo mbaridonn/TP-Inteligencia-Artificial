@@ -39,8 +39,11 @@ class Excel_Reader(object):
     self.training_values[self.training_values == 'Universitario'] = 3
     self.training_values[self.training_values == 'Posgrado'] = 4
 
-  def get_training_values(self):
-    return self.training_values
+  def get_xAll(self):
+    return np.delete(self.training_values, 5, 1)
+  
+  def get_y(self):
+    return self.training_values[:, 5]
 
 class Neural_Network(object):
   def __init__(self):
@@ -84,18 +87,9 @@ class Neural_Network(object):
     o = self.forward(X)
     self.backward(X, y, o)
 
-  def saveWeights(self):
-    np.savetxt("w1.txt", self.W1, fmt="%s")
-    np.savetxt("w2.txt", self.W2, fmt="%s")
-
   def predict(self):
-    print ("Predicted data based on trained weights: ")
-    #print ("Input (scaled): \n" + str(xPredicted))
-    #print ("Input: \n" + str(hours_studied) + ", " + str(hours_slept))
-    #print ("Output: \n" + str(self.forward(xPredicted)))
-    print ("Output: \n" + str(self.forward(xPredicted)[0][0] * 110000))
-
-
+    print ("\nSueldo predecido en base a los casos de entrenamiento:")
+    print (str(int(self.forward(xPredicted) * sueldoMasAlto)) + " pesos")
 
 #testing data
 genero = 1
@@ -104,11 +98,18 @@ provincia = 1
 años_experiencia = 2
 nivel_estudios = 1
 
-#read excel
+row_to_add = [[genero, edad, provincia, años_experiencia, nivel_estudios]]
 
-# X = (hours studying, hours sleeping), y = score on test
-xAll = np.array(([1,28,3,3,3], [2,30,1,5,4], [3,26,2,7,4], [genero, edad, provincia, años_experiencia, nivel_estudios]), dtype=float) # input data
-y = np.array(([80000], [120000], [110000]), dtype=float)
+#read excel
+excel_reader = Excel_Reader()
+excel_reader.apply_conditions()
+
+xAll = np.array((np.append(excel_reader.get_xAll(), row_to_add, axis=0)), dtype=float)
+
+rows_number = excel_reader.get_xAll().shape[0]
+y = np.array((excel_reader.get_y().reshape(rows_number,1)), dtype=float)
+
+sueldoMasAlto = np.amax(y, axis=0)
 
 # scale units
 xAll = xAll/np.amax(xAll, axis=0) # scaling input data
@@ -118,35 +119,14 @@ y = y/np.amax(y, axis=0) # scaling output data
 X = np.split(xAll, [3])[0] # training data
 xPredicted = np.split(xAll, [3])[1] # testing data
 
-
+unscale = lambda x: x * sueldoMasAlto
 
 NN = Neural_Network()
 for i in range(1000): # trains the NN 1,000 times
   print ("# " + str(i) + "\n")
-  print ("Input (scaled): \n" + str(X))
-  print ("Actual Output: \n" + str(y))
-  print ("Predicted Output: \n" + str(NN.forward(X)))
-  print ("Loss: \n" + str(np.mean(np.square(y - NN.forward(X))))) # mean sum squared loss
+  print ("Output real: \n" + str(unscale(y)))
+  print ("Output predecido: \n" + str(unscale(NN.forward(X))))
   print ("\n")
   NN.train(X, y)
 
-NN.saveWeights()
 NN.predict()
-
-
-excel_reader = Excel_Reader()
-excel_reader.apply_conditions()
-print("Training Values:")
-print(excel_reader.get_training_values())
-
-print("\n xAll:")
-print(xAll);
-print("\n prueba: ")
-prueba = excel_reader.get_training_values()
-row_to_add = np.array([genero, edad, provincia, años_experiencia, nivel_estudios])
-prueba = np.vstack((prueba,row_to_add))
-print(prueba)
-
-'''
-xAll = np.array(([1,28,3,3,3], [2,30,1,5,4], [3,26,2,7,4], [genero, edad, provincia, años_experiencia, nivel_estudios]), dtype=float) # input data
-'''
