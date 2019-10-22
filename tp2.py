@@ -116,8 +116,8 @@ xAll = xAll/np.amax(xAll, axis=0) # scaling input data
 y = y/np.amax(y, axis=0) # scaling output data
 
 # split data
-X = np.split(xAll, [3])[0] # training data
-xPredicted = np.split(xAll, [3])[1] # testing data
+X = np.split(xAll, [rows_number])[0] # training data
+xPredicted = np.split(xAll, [rows_number])[1] # testing data
 
 unscale = lambda x: x * sueldoMasAlto
 
