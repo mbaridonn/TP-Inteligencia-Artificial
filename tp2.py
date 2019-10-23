@@ -3,7 +3,8 @@ import pandas
 
 class Excel_Reader(object):
   def __init__(self):
-    df = pandas.read_excel('sample.xlsx')
+    df = pandas.read_excel('Casos_de_entrenamiento.xlsx')
+    self.original_training_values = df.values
     self.training_values = df.values
 
   def apply_conditions(self):
@@ -24,6 +25,9 @@ class Excel_Reader(object):
     return np.delete(self.training_values, 5, 1)
   
   def get_y(self):
+    return self.training_values[:, 5]
+	
+  def export_excel(self):
     return self.training_values[:, 5]
 
 class Neural_Network(object):
@@ -133,11 +137,29 @@ unscale = lambda x: x * sueldoMasAlto
 NN = Neural_Network()
 for i in range(1000): # trains the NN 1,000 times
   print ("# " + str(i) + "\n")
-  print ("Output real: \n" + str(unscale(y)))
-  output = np.trunc(unscale(NN.forward(X)))
-  print ("Output predecido: \n" + str(output))
+  sueldo_real = unscale(y)
+  print ("Sueldo real: \n" + str(sueldo_real))
+  sueldo_predecido = np.trunc(unscale(NN.forward(X)))
+  print ("Sueldo predecido: \n" + str(sueldo_predecido))
   print ("Error: " + str(np.mean(np.square(y - NN.forward(X)))))
   print ("\n")
   NN.train(X, y)
 
+input = excel_reader.original_training_values
+
+df = pandas.DataFrame({
+'Genero':input[:,0], 
+'Edad':input[:,1], 
+'Provincia':input[:,2], 
+'Años de experiencia':input[:,3], 
+'Nivel de estudios':input[:,4],
+'Sueldo Real':sueldo_real[:,0],
+'Sueldo Predecido':sueldo_predecido[:,0],
+'Diferencia entre sueldos':(sueldo_real[:,0] - sueldo_predecido[:,0])
+})
+
+df.to_excel("Resultados.xlsx")
+
 NN.predict()
+
+print("\nResultados guardados en Resultados.xlsx")
