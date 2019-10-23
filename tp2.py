@@ -13,31 +13,13 @@ class Excel_Reader(object):
     self.training_values[self.training_values == 'Otros'] = 3
     self.training_values[self.training_values == 'CABA'] = 1
     self.training_values[self.training_values == 'GBA'] = 2
-    self.training_values[self.training_values == 'Catamarca'] = 3
-    self.training_values[self.training_values == 'Chaco'] = 4
-    self.training_values[self.training_values == 'Chubut'] = 5
-    self.training_values[self.training_values == 'Cordoba'] = 6
-    self.training_values[self.training_values == 'Corrientes'] = 7
-    self.training_values[self.training_values == 'Entre Rios'] = 8
-    self.training_values[self.training_values == 'Formosa'] = 9
-    self.training_values[self.training_values == 'Jujuy'] = 10
-    self.training_values[self.training_values == 'La Pampa'] = 11
-    self.training_values[self.training_values == 'La Rioja'] = 12
-    self.training_values[self.training_values == 'Mendoza'] = 13
-    self.training_values[self.training_values == 'Misiones'] = 14
-    self.training_values[self.training_values == 'Neuquen'] = 15
-    self.training_values[self.training_values == 'Rio Negro'] = 16
-    self.training_values[self.training_values == 'Salta'] = 17
-    self.training_values[self.training_values == 'San Juan'] = 18
-    self.training_values[self.training_values == 'San Luis'] = 19
-    self.training_values[self.training_values == 'Santa Cruz'] = 20
-    self.training_values[self.training_values == 'Santa Fe'] = 21
-    self.training_values[self.training_values == 'Santiago del Estero'] = 22
-    self.training_values[self.training_values == 'Tierra del Fuego'] = 23
+    self.training_values[self.training_values == 'Cordoba'] = 3
+    self.training_values[self.training_values == 'Entre Rios'] = 4
+    self.training_values[self.training_values == 'Mendoza'] = 5
+    self.training_values[self.training_values == 'Neuquen'] = 6
     self.training_values[self.training_values == 'Secundario'] = 1
     self.training_values[self.training_values == 'Terciario'] = 2
     self.training_values[self.training_values == 'Universitario'] = 3
-    self.training_values[self.training_values == 'Posgrado'] = 4
 
   def get_xAll(self):
     return np.delete(self.training_values, 5, 1)
@@ -91,14 +73,42 @@ class Neural_Network(object):
     print ("\nSueldo predecido en base a los casos de entrenamiento:")
     print (str(int(self.forward(xPredicted) * sueldoMasAlto)) + " pesos")
 
-#testing data
-genero = 1
-edad = 22
-provincia = 1
-años_experiencia = 2
-nivel_estudios = 1
+class Main(object):
+  def initialize_parameters(self):
+    print("Bienvenido al predictor de sueldos \n")
+    print("Para cada opción, ingrese el número correspondiente \n")
 
-row_to_add = [[genero, edad, provincia, años_experiencia, nivel_estudios]]
+    print("Ingrese su genero:")
+    print("1 -  Hombre")
+    print("2 -  Mujer")
+    print("3 -  Otros \n")
+    genero = int(input())
+
+    print("\nIngrese su edad:")
+    edad = int(input())
+
+    print("\nIngrese su provincia:")
+    print("1 - CABA")
+    print("2 - GBA")
+    print("3 - Cordoba")
+    print("4 - Entre Rios")
+    print("5 - Mendoza")
+    print("6 - Neuquen")
+    provincia = int(input())
+
+    print("\nIngrese la cantidad de años de experiencia en IT:")
+    años_experiencia = int(input())
+
+    print("\nIngrese su  nivel de estudios:")
+    print("1 - Secundario")
+    print("2 - Terciario")
+    print("3 - Universitario")
+    nivel_estudios = int(input())
+
+    return [[genero, edad, provincia, años_experiencia, nivel_estudios]]
+
+main = Main()
+row_to_add = main.initialize_parameters()
 
 #read excel
 excel_reader = Excel_Reader()
