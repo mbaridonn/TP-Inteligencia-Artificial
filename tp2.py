@@ -69,7 +69,7 @@ class Neural_Network(object):
     self.backward(X, y, o)
 
   def predict(self):
-    print ("\nSueldo predecido en base a los casos de entrenamiento:")
+    print ("Sueldo predecido en base a los casos de entrenamiento:")
     print (str(int(self.forward(xPredicted) * sueldoMasAlto)) + " pesos")
 
 class Main(object):
@@ -134,7 +134,9 @@ NN = Neural_Network()
 for i in range(1000): # trains the NN 1,000 times
   print ("# " + str(i) + "\n")
   print ("Output real: \n" + str(unscale(y)))
-  print ("Output predecido: \n" + str(unscale(NN.forward(X))))
+  output = np.trunc(unscale(NN.forward(X)))
+  print ("Output predecido: \n" + str(output))
+  print ("Error: " + str(np.mean(np.square(y - NN.forward(X)))))
   print ("\n")
   NN.train(X, y)
 
